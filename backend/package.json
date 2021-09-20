@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "nodemon": "^2.0.12"
+    "knex": "^0.95.11",
+    "nodemon": "^2.0.12",
+    "pg": "^8.7.1"
   }
 }
