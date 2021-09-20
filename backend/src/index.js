@@ -6,7 +6,7 @@ const HOST = '0.0.0.0'
 const app = express()
 
 app.get('/', (req, res) => {
-  res.send('Hello World teste')
+  res.send('Hello World TESTE')
 })
 
-app.listen(PORT, HOST)
+app.listen(PORT, HOST, () => console.log('Server is running'))
