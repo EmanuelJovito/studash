@@ -1,0 +1,28 @@
+version: "3.9"
+
+services: 
+  database:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=studash
+    ports:
+      - '5432:5432'
+    volumes: 
+      - pgdata:/var/lib/postgresql/data
+  app:
+    container_name: studash
+    build: .
+    ports: 
+      - "3000:3000"
+    volumes:
+      - .:/usr/app 
+    links: 
+      - database
+    depends_on:
+      - database
+volumes: 
+  pgdata: 
+    driver: local
