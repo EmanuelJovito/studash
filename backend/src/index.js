@@ -6,6 +6,12 @@ const HOST = '0.0.0.0'
 
 const app = express()
 
+app.use((req, res, next) => {
+  const error = new Error('Not found')
+  error.status = 404
+  next(error)
+})
+
 app.use(express.json())
 app.use(routes)
 
