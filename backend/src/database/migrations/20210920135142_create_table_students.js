@@ -12,6 +12,7 @@ exports.up = knex =>
         .references('courses.id')
         .notNullable()
         .onDelete('CASCADE')
+    table.timestamp('created_at').defaultTo(knex.fn.now())
   })
 
 exports.down = knex => knex.schema.dropTable('students')

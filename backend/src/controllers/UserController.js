@@ -8,21 +8,21 @@ module.exports = {
   },
   async create(req, res, next) {
     try {
-      const { id,
+      const {
               student_name,
               student_address,
               student_email,
               student_number,
-              student_course  
+              student_course,
+    
             } = req.body 
 
       await knex('students').insert({
-        id,
         student_name,
         student_address,
         student_email,
         student_number,
-        student_course
+        student_course, 
       })
 
       return res.status(201).send()
@@ -32,21 +32,21 @@ module.exports = {
   },
   async update(req, res, next) {
     try {
-      const { id ,
+      const {
               student_name,
               student_address,
               student_email,
               student_number,
-              student_course  
+              student_course, 
+    
             } = req.body 
 
       await knex('students').update({
-        id,
         student_name,
         student_address,
         student_email,
         student_number,
-        student_course
+        student_course, 
       }).where('id', '=', req.params.id)
 
       return res.send()
