@@ -9,7 +9,7 @@ export function Logo() {
       w="64"
     >
       Studash
-      <Text as="span" color="pink.500">.</Text>
+      <Text as="span" color="blue.500">.</Text>
     </Text>
   )
 }

@@ -20,7 +20,7 @@ export function PaginationItem({
         colorScheme="pink"
         disabled
         _disabled={{
-          bg: "pink.500",
+          bg: "blue.500",
           cursor: "default",
         }}
       >
