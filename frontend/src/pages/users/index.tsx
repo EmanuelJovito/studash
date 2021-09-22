@@ -1,21 +1,22 @@
 import NextLink from "next/link";
-import { Box, Button, Checkbox, Flex, Heading, Icon, Link, Spinner, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Icon, Link, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { RiAddLine } from "react-icons/ri";
+import { format } from "date-fns"
 
 import { Header } from "../../components/Header";
-import { Pagination } from "../../components/Pagination";
-import { getUsers, useUsers } from "../../services/hooks/useUsers";
-import { useState } from "react";
-import { api } from "../../services/api";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function UserList() {
-  const [page, setPage] = useState(1)
-  const { data, isLoading, isFetching, error } = useUsers(page)
+  const [students, setStudents] = useState([])
 
-  const isWideVersion = useBreakpointValue({
-    base: false,
-    lg: true
-  })
+  useEffect(() => {
+    axios.get('http://localhost:3001/users').then(response => {
+      const data = response.data
+      
+      setStudents(data)
+    })
+  }, [])
 
   return (
     <Box>
@@ -25,9 +26,7 @@ export default function UserList() {
         <Box flex="1" borderRadius={8} bg="gray.800" p="8">
           <Flex mb="8" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal" >
-              Usuários
-              
-              { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4"/>}
+              Alunos
             </Heading>
 
             <NextLink href="/users/create" passHref>
@@ -43,58 +42,41 @@ export default function UserList() {
             </NextLink>
           </Flex>
         
-          { isLoading ? (
-            <Flex justify="center">
-              <Spinner />
-            </Flex>
-          ) : error ? (
-            <Flex justify="center">
-              <Text>
-                Falha ao obter dados dos usuários
-              </Text>
-            </Flex>
-          ) : (
           <>
             <Table colorScheme='whiteAlpha'>
               <Thead>
                 <Tr>
-                  <Th px={["4", "4", "6"]} color="gray.300" width="8">
-                    <Checkbox colorScheme="pink" />
-                  </Th>
                   <Th>Usuário</Th>
-                  { isWideVersion && <Th>Data de cadastro</Th> }
-                  { isWideVersion ? ( <Th width="8"></Th> ) : ""}
+                  <Th>Data de cadastro</Th>
+                  <Th>CPF</Th>
+                  <Th>Endereço</Th>
+                  <Th>CEP</Th>
+                  <Th>Telefone</Th>
+                  <Th>Curso</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {data.users.map(user => {
-                  return (
-                    <Tr key={user.id}>
-                      <Td px={["4", "4", "6"]}>
-                        <Checkbox colorScheme="pink" />
-                      </Td>
-                      <Td>
-                        <Box>
-                          <Link color="purple.400" onMouseEnter={() => handlePrefetchUser(user.id)}>
-                            <Text fontWeight="bold">{user.name}</Text>
-                          </Link>
-                          <Text fontSize="sm" color="gray.300">{user.email}</Text>
-                        </Box>
-                      </Td>
-                      { isWideVersion && <Td>{user.createdAt}</Td> }
-                    </Tr>
-                  )
-                })}
+                {students.map(studentsInfo => (
+                <Tr>
+                  <Td>
+                    <Box>
+                      <Link color="purple.400" >
+                          <Text fontWeight="bold">{studentsInfo.student_name}</Text>
+                      </Link>
+                      <Text fontSize="sm" color="gray.300">{studentsInfo.student_email}</Text>
+                    </Box>
+                  </Td>
+                  <Td>{format(new Date(studentsInfo.created_at), "dd/MM/yyyy")}</Td>
+                  <Td>{studentsInfo.student_CPF}</Td>
+                  <Td>{studentsInfo.student_address}</Td>
+                  <Td>{studentsInfo.student_CEP}</Td>
+                  <Td>{studentsInfo.student_number}</Td>
+                  <Td>{studentsInfo.course_id}</Td>
+                </Tr>
+                ))}
               </Tbody>
             </Table>
-
-            <Pagination 
-              totalCountOfRegisters={data.totalCount}
-              currentPage={page}
-              onPageChange={setPage}
-            />
           </>
-          )}
         </Box>
       </Flex>
     </Box>

@@ -7,7 +7,6 @@ import { yupResolver } from "@hookform/resolvers/yup"
 
 import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
-import { api } from "../../services/api";
 import { useRouter } from "next/dist/client/router";
 
 type CreateUserFormData = {
@@ -20,35 +19,21 @@ type CreateUserFormData = {
 const createUserFormSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
   email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
-  password: yup.string().required("Senha obrigatória").min(6, 'No mínimo 6 caracteres'),
-  password_confirmation: yup.string().oneOf([
-    null, yup.ref("password")
-  ], 'As senhas precisam ser iguais')
+  cpf: yup.string().required("CPF obrigatória"),
+  address: yup.string().required("Endereço obrigatória"),
+  cep: yup.string().required("CEP obrigatória"),
+  number: yup.string().required("Numero para contato é obrigatória"),
 })
 
 export default function CreateUser() {
   const router = useRouter()
 
-  const createUser = useMutation(async (user: CreateUserFormData) =>{
-    const response = await api.post('users', {
-      user: {
-        ...user,
-        created_at: new Date()
-      }
-    })
-
-    return response.data.user
-  }, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("users")
-    }
-  })
-
   const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(createUserFormSchema)
+    resolver: yupResolver(createUserFormSchema),
+    mode: 'onSubmit'
   })
 
-  const { errors } = formState
+  const { errors, isDirty } = formState
 
   const handleCreateUser: SubmitHandler<CreateUserFormData> = async (values) => {
     await createUser.mutateAsync(values)
@@ -84,7 +69,7 @@ export default function CreateUser() {
               <Input 
                 name="email" 
                 type="email" 
-                label="E-email"
+                label="E-mail"
                 error={errors.email} 
                 {...register('email')}
               />
