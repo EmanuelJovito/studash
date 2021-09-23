@@ -5,17 +5,28 @@ import { format } from "date-fns"
 
 import { Header } from "../../components/Header";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../../services/api";
+import { useNotify } from "../../hooks/useNotify";
 
 export default function UserList() {
   const [students, setStudents] = useState([])
+  const { notify } = useNotify()
 
   useEffect(() => {
-    axios.get('http://localhost:3001/users').then(response => {
-      const data = response.data
-      
-      setStudents(data)
-    })
+    async function loadData() {
+      try {
+        const { data } = await api.get("/users");
+        setStudents(data)
+      } catch (error) {
+        notify({
+          title: "Erro ao carregar os alunos.",
+          message: error.response?.data.message || error.message,
+          type: "error",
+        })
+      }
+    }
+     
+    loadData()
   }, [])
 
   return (
@@ -56,23 +67,23 @@ export default function UserList() {
                 </Tr>
               </Thead>
               <Tbody>
-                {students.map(studentsInfo => (
-                <Tr>
-                  <Td>
-                    <Box>
-                      <Link color="purple.400" >
-                          <Text fontWeight="bold">{studentsInfo.student_name}</Text>
-                      </Link>
-                      <Text fontSize="sm" color="gray.300">{studentsInfo.student_email}</Text>
-                    </Box>
-                  </Td>
-                  <Td>{format(new Date(studentsInfo.created_at), "dd/MM/yyyy")}</Td>
-                  <Td>{studentsInfo.student_CPF}</Td>
-                  <Td>{studentsInfo.student_address}</Td>
-                  <Td>{studentsInfo.student_CEP}</Td>
-                  <Td>{studentsInfo.student_number}</Td>
-                  <Td>{studentsInfo.course_id}</Td>
-                </Tr>
+                {students.map(student => (
+                  <Tr key={student.id}>
+                    <Td>
+                      <Box>
+                        <Link color="purple.400" >
+                            <Text fontWeight="bold">{student.student_name}</Text>
+                        </Link>
+                        <Text fontSize="sm" color="gray.300">{student.student_email}</Text>
+                      </Box>
+                    </Td>
+                    <Td>{format(new Date(student.created_at), "dd/MM/yyyy")}</Td>
+                    <Td>{student.student_CPF}</Td>
+                    <Td>{student.student_address}</Td>
+                    <Td>{student.student_CEP}</Td>
+                    <Td>{student.student_number}</Td>
+                    <Td>{student.course_id}</Td>
+                  </Tr>
                 ))}
               </Tbody>
             </Table>
