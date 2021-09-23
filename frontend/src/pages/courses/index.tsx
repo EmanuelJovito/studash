@@ -1,3 +1,4 @@
+import NextLink from "next/link";
 import {
   Flex,
   SimpleGrid,
@@ -11,6 +12,8 @@ import {
   Text,
   Link,
   Heading,
+  Button,
+  Icon,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
@@ -18,27 +21,46 @@ import { format } from "date-fns";
 import { Header } from "../../components/Header";
 import { api } from "../../services/api";
 import { useNotify } from "../../hooks/useNotify";
+import { RiAddLine } from "react-icons/ri";
+import { FiEdit2, FiX } from "react-icons/fi";
 
 export default function Dashboard() {
   const [courses, setCourses] = useState([]);
-  const { notify } = useNotify()
+  const { notify } = useNotify();
 
   useEffect(() => {
     async function loadData() {
       try {
         const { data } = await api.get("/courses");
-        setCourses(data)
+        setCourses(data);
       } catch (error) {
         notify({
           title: "Erro ao carregar cursos.",
           message: error.response?.data.message || error.message,
           type: "error",
-        })
+        });
       }
     }
-     
-    loadData()
-  }, []);
+
+    loadData();
+  }, [courses, setCourses]);
+
+  async function handleDeleteCourse(id: string) {
+    try {
+      await api.delete("/courses/" + id)
+      notify({
+        title: "Curso deletado com sucesso.",
+        message: "Success",
+        type: "success",
+      });
+    } catch (error) {
+      notify({
+        title: "Erro ao deletar curso.",
+        message: error.response?.data.message || error.message,
+        type: "error",
+      });
+    }
+  }
 
   return (
     <Flex direction="column" h="100vh">
@@ -50,6 +72,18 @@ export default function Dashboard() {
             <Heading size="lg" fontWeight="normal">
               Cursos
             </Heading>
+
+            <NextLink href="/courses/create" passHref>
+              <Button
+                as="a"
+                size="sm"
+                fontSize="sm"
+                colorScheme="blue"
+                leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+              >
+                Criar novo
+              </Button>
+            </NextLink>
           </Flex>
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
@@ -66,6 +100,8 @@ export default function Dashboard() {
                     <Th>Curso</Th>
                     <Th>Data de criação</Th>
                     <Th>Carga horaria</Th>
+                    <Th></Th>
+                    <Th></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -83,6 +119,21 @@ export default function Dashboard() {
                         {format(new Date(course.created_at), "dd/MM/yyyy")}
                       </Td>
                       <Td>{course.workload}</Td>
+                      <Td maxWidth="10">
+                        <Link href='/courses/update'>
+                          <Button colorScheme="blue">
+                            <Icon as={FiEdit2} />
+                          </Button>
+                        </Link>
+                      </Td>
+                      <Td maxWidth="10">
+                        <Button
+                          colorScheme="red"
+                          onClick={() => handleDeleteCourse(course.id)}
+                        >
+                          <Icon as={FiX} />
+                        </Button>
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>
