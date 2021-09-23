@@ -13,5 +13,6 @@ routes.get('/courses', CoursesController.index)
 routes.post('/courses', CoursesController.create)
 routes.put('/courses/:id', CoursesController.update)
 routes.delete('/courses/:id', CoursesController.delete)
+routes.get('/courses/:id', CoursesController.course)
 
 module.exports = routes 
