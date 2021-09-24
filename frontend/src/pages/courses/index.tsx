@@ -23,8 +23,10 @@ import { api } from "../../services/api";
 import { useNotify } from "../../hooks/useNotify";
 import { RiAddLine } from "react-icons/ri";
 import { FiEdit2, FiX } from "react-icons/fi";
+import { useRouter } from "next/router";
 
 export default function Dashboard() {
+  const Router = useRouter()
   const [courses, setCourses] = useState([]);
   const { notify } = useNotify();
 
@@ -120,11 +122,9 @@ export default function Dashboard() {
                       </Td>
                       <Td>{course.workload}</Td>
                       <Td maxWidth="10">
-                        <Link href='/courses/update'>
-                          <Button colorScheme="blue">
-                            <Icon as={FiEdit2} />
-                          </Button>
-                        </Link>
+                        <Button colorScheme="blue" onClick={() => Router.push(`/courses/${course.id}`)}>
+                          <Icon as={FiEdit2} />
+                        </Button>
                       </Td>
                       <Td maxWidth="10">
                         <Button
