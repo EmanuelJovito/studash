@@ -25,7 +25,7 @@ export function ActiveLink({
      asPath.startsWith(String(rest.as)))) {
         isActive = true
       }
-
+    
   return (
     <Link {...rest}>
       {cloneElement(children, {
